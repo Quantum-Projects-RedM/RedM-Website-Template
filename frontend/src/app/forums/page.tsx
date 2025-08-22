@@ -228,16 +228,16 @@ export default function ForumsPage() {
     fetchForumData();
   }, []);
 
-  const filteredPosts = posts.filter(post => post.category === selectedCategory);
+  const filteredPosts = Array.isArray(posts) ? posts.filter(post => post.category === selectedCategory) : [];
   const sortedPosts = filteredPosts.sort((a, b) => {
     if (a.is_pinned && !b.is_pinned) return -1;
     if (!a.is_pinned && b.is_pinned) return 1;
     return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
   });
 
-  const visibleCategories = categories.slice(categoryIndex, categoryIndex + categoriesPerPage);
+  const visibleCategories = Array.isArray(categories) ? categories.slice(categoryIndex, categoryIndex + categoriesPerPage) : [];
   const canGoLeft = categoryIndex > 0;
-  const canGoRight = categoryIndex + categoriesPerPage < categories.length;
+  const canGoRight = Array.isArray(categories) && categoryIndex + categoriesPerPage < categories.length;
 
   const showNotification = (message: string, type: 'success' | 'error' | 'warning' = 'success') => {
     setNotification({ message, type, visible: true });
