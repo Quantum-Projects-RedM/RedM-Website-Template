@@ -86,7 +86,7 @@ A comprehensive community website for RedM servers featuring authentic Wild West
 cd redm-website
 
 # Backend setup
-cd backend && bun install && cp .env.example .env
+cd backend && bun install
 bunx prisma migrate dev && bun run dev
 
 # Frontend setup (new terminal)
