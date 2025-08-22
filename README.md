@@ -89,6 +89,9 @@ cd redm-website
 cd backend && bun install
 bunx prisma migrate dev && bun run dev
 
+# Opens database browser
+bunx prisma studio
+
 # Frontend setup (new terminal)
 cd frontend && bun install && bun run dev
 ```
