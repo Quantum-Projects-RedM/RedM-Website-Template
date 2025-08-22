@@ -313,7 +313,7 @@ export default function AboutPage() {
             </h2>
             
             <div className="grid md:grid-cols-2 gap-8">
-              {staff.map((member, index) => (
+              {staff && staff.length > 0 ? staff.map((member, index) => (
                 <motion.div
                   key={member.id}
                   initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
@@ -355,7 +355,13 @@ export default function AboutPage() {
                     </div>
                   </div>
                 </motion.div>
-              ))}
+              )) : (
+                <div className="col-span-2 text-center">
+                  <div className="text-white text-lg">
+                    {loading ? 'Loading staff...' : 'No staff members found.'}
+                  </div>
+                </div>
+              )}
             </div>
           </motion.section>
 
