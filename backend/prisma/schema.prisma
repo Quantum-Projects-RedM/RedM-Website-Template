@@ -1,0 +1,161 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+enum UserRole {
+  USER
+  MODERATOR
+  ADMIN
+  SUPER_ADMIN
+}
+
+model User {
+  id          Int      @id @default(autoincrement())
+  email       String   @unique
+  username    String   @unique
+  password    String
+  role        UserRole @default(USER)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  lastLoginAt DateTime?
+
+  // Relations
+  forumPosts    ForumPost[]
+  forumReplies  ForumReply[]
+  eventRegistrations EventRegistration[]
+
+  @@map("users")
+}
+
+model ForumCategory {
+  id          Int         @id @default(autoincrement())
+  name        String      @unique
+  description String
+  icon        String
+  order       Int         @default(0)
+  postMinRole UserRole    @default(USER)
+  replyMinRole UserRole   @default(USER)
+  isActive    Boolean     @default(true)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  // Relations
+  posts       ForumPost[]
+
+  @@map("forum_categories")
+}
+
+model ForumPost {
+  id          Int      @id @default(autoincrement())
+  title       String
+  content     String
+  imageUrl    String?
+  isPinned    Boolean  @default(false)
+  isLocked    Boolean  @default(false)
+  views       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Foreign Keys
+  authorId    Int
+  categoryId  Int
+
+  // Relations
+  author      User           @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  category    ForumCategory  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  replies     ForumReply[]
+
+  @@map("forum_posts")
+}
+
+model ForumReply {
+  id          Int      @id @default(autoincrement())
+  content     String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Foreign Keys
+  authorId    Int
+  postId      Int
+
+  // Relations
+  author      User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  post        ForumPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@map("forum_replies")
+}
+
+model Event {
+  id              Int      @id @default(autoincrement())
+  title           String
+  description     String
+  date            DateTime
+  time            String
+  location        String
+  maxParticipants Int
+  eventType       String
+  imageUrl        String?
+  isFeatured      Boolean  @default(false)
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  registrations   EventRegistration[]
+
+  @@map("events")
+}
+
+model EventRegistration {
+  id          Int      @id @default(autoincrement())
+  createdAt   DateTime @default(now())
+
+  // Foreign Keys
+  userId      Int
+  eventId     Int
+
+  // Relations
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event       Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, eventId])
+  @@map("event_registrations")
+}
+
+model Rule {
+  id          Int      @id @default(autoincrement())
+  category    String
+  title       String
+  description String
+  severity    String
+  punishment  String
+  order       Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("rules")
+}
+
+model ServerStatus {
+  id              Int      @id @default(autoincrement())
+  serverName      String
+  serverDescription String
+  serverIp        String
+  serverPort      Int
+  maxPlayers      Int
+  currentPlayers  Int
+  isOnline        Boolean
+  lastUpdated     DateTime @default(now())
+
+  @@map("server_status")
+}
