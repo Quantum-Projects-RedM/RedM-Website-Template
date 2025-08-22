@@ -5,7 +5,7 @@ import { Request, Response } from 'express';
 // Rate limiting configurations
 export const generalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
+  max: 500, // limit each IP to 500 requests per windowMs
   message: {
     error: 'Too many requests from this IP, please try again later.',
     retryAfter: '15 minutes'
@@ -23,7 +23,7 @@ export const generalLimiter = rateLimit({
 
 export const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5, // limit each IP to 5 login attempts per windowMs
+  max: 10, // limit each IP to 10 login attempts per windowMs
   message: {
     error: 'Too many login attempts from this IP, please try again later.',
     retryAfter: '15 minutes'
@@ -40,7 +40,7 @@ export const authLimiter = rateLimit({
 
 export const apiLimiter = rateLimit({
   windowMs: 1 * 60 * 1000, // 1 minute
-  max: 60, // limit each IP to 60 API requests per minute
+  max: 120, // limit each IP to 120 API requests per minute
   message: {
     error: 'API rate limit exceeded',
     retryAfter: '1 minute'
